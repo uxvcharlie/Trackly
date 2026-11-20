@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane prefHeight="600.0" prefWidth="950.0"
+            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+    <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="10.0">
+            <BorderPane.margin><Insets bottom="10"/></BorderPane.margin>
+            <CheckBox fx:id="chkMostrarHechos" text="Mostrar los ya hechos" />
+        </HBox>
+    </top>
+
+    <center>
+        <TableView fx:id="tblRecordatorios">
+            <columns>
+                <TableColumn fx:id="colFecha" text="Fecha" />
+                <TableColumn fx:id="colHora" text="Hora" />
+                <TableColumn fx:id="colTitulo" text="Título" />
+                <TableColumn fx:id="colMonto" text="Monto (C$)" />
+                <TableColumn fx:id="colCategoria" text="Categoría" />
+                <TableColumn fx:id="colEstado" text="Estado" />
+            </columns>
+            <columnResizePolicy>
+                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+            </columnResizePolicy>
+        </TableView>
+    </center>
+
+    <right>
+        <VBox prefWidth="260.0" spacing="8.0">
+            <BorderPane.margin><Insets left="10"/></BorderPane.margin>
+            <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Recordatorio" />
+
+            <Label text="Título" />
+            <TextField fx:id="txtTitulo" promptText="Ej: pagar internet" />
+
+            <Label text="Fecha" />
+            <DatePicker fx:id="dpFecha" maxWidth="Infinity" />
+
+            <Label text="Hora" />
+            <TextField fx:id="txtHora" promptText="Ej: 7:30 o 19:00" />
+
+            <CheckBox fx:id="chkPago" text="Es un pago" />
+
+            <Label text="Monto (C$)" />
+            <TextField fx:id="txtMonto" promptText="0.00" />
+
+            <Label text="Categoría" />
+            <ComboBox fx:id="cmbCategoria" maxWidth="Infinity" />
+
+            <CheckBox fx:id="chkMensual" text="Se repite cada mes" />
+
+            <HBox spacing="8.0">
+                <Button fx:id="btnNuevo" text="Nuevo" />
+                <Button fx:id="btnGuardar" defaultButton="true" text="Guardar" />
+                <Button fx:id="btnBorrar" text="Borrar" />
+            </HBox>
+            <HBox spacing="8.0">
+                <Button fx:id="btnHecho" text="Marcar hecho" />
+                <Button fx:id="btnPagar" text="Pagar" />
+            </HBox>
+        </VBox>
+    </right>
+</BorderPane>
