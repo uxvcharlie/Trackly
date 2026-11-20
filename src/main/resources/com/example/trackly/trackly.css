@@ -30,3 +30,30 @@
 .hyperlink:hover { -fx-text-fill: #ecc3ae; }
 .tab-pane > .tab-header-area > .headers-region > .tab { -fx-background-color: #232120; }
 .tab-pane > .tab-header-area > .headers-region > .tab:selected { -fx-background-color: #34312f; }
+
+/* Inicio */
+.dato { -fx-background-color: #232120; -fx-background-radius: 8; -fx-border-color: #34312f; -fx-border-radius: 8; -fx-padding: 12 14 12 14; -fx-spacing: 4; }
+.dato-titulo { -fx-text-fill: #a39d90; -fx-font-size: 12px; }
+.dato-valor { -fx-text-fill: #e8e2d6; -fx-font-size: 20px; -fx-font-weight: bold; }
+.negativo { -fx-text-fill: #d9897a; }
+.progress-bar > .track { -fx-background-color: #34312f; -fx-background-radius: 4; }
+.progress-bar > .bar { -fx-background-color: #8a3d3d; -fx-background-radius: 4; -fx-padding: 4; }
+.scroll-pane, .scroll-pane > .viewport { -fx-background-color: #1a1918; }
+.chart-title { -fx-text-fill: #e8e2d6; -fx-font-size: 13px; }
+.chart-legend { -fx-background-color: transparent; }
+.chart-pie-label, .axis-label, .axis { -fx-text-fill: #a39d90; -fx-tick-label-fill: #a39d90; }
+.default-color0.chart-pie { -fx-pie-color: #8a3d3d; }
+.default-color1.chart-pie { -fx-pie-color: #b0805a; }
+.default-color2.chart-pie { -fx-pie-color: #6f7a5a; }
+.default-color3.chart-pie { -fx-pie-color: #5a7080; }
+.default-color4.chart-pie { -fx-pie-color: #a89a6a; }
+.default-color5.chart-pie { -fx-pie-color: #7a5a4a; }
+.default-color6.chart-pie { -fx-pie-color: #8f897d; }
+.default-color0.chart-bar { -fx-bar-fill: #b0805a; }
+.chart-plot-background { -fx-background-color: transparent; }
+.chart-horizontal-grid-lines { -fx-stroke: #34312f; }
+.chart-vertical-grid-lines { -fx-stroke: transparent; }
+.list-view { -fx-background-color: #232120; -fx-border-color: #34312f; }
+/* Colores planos en las gráficas, sin degradado */
+.chart-pie { -fx-background-color: -fx-pie-color; -fx-border-color: #1a1918; -fx-border-width: 2; }
+.chart-bar { -fx-background-color: -fx-bar-fill; -fx-background-insets: 0; }

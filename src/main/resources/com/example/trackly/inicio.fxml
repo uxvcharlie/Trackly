@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<ScrollPane fitToWidth="true" styleClass="fondo" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.trackly.controller.InicioController">
+    <VBox spacing="16" styleClass="fondo">
+        <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+
+        <HBox alignment="CENTER_LEFT" spacing="12">
+            <Label fx:id="lblMes" styleClass="titulo"/>
+            <Label fx:id="lblEstado" styleClass="mensaje"/>
+        </HBox>
+
+        <HBox spacing="12">
+            <VBox styleClass="dato" HBox.hgrow="ALWAYS">
+                <Label styleClass="dato-titulo" text="Disponible"/>
+                <Label fx:id="lblDisponible" styleClass="dato-valor"/>
+            </VBox>
+            <VBox styleClass="dato" HBox.hgrow="ALWAYS">
+                <Label styleClass="dato-titulo" text="Gastado"/>
+                <Label fx:id="lblGastado" styleClass="dato-valor"/>
+            </VBox>
+            <VBox styleClass="dato" HBox.hgrow="ALWAYS">
+                <Label styleClass="dato-titulo" text="Pagos pendientes"/>
+                <Label fx:id="lblPendientes" styleClass="dato-valor"/>
+            </VBox>
+            <VBox styleClass="dato" HBox.hgrow="ALWAYS">
+                <Label styleClass="dato-titulo" text="Queda a fin de mes"/>
+                <Label fx:id="lblProyeccion" styleClass="dato-valor"/>
+            </VBox>
+        </HBox>
+
+        <VBox spacing="6">
+            <ProgressBar fx:id="barraPresupuesto" maxWidth="Infinity" progress="0"/>
+            <Label fx:id="lblBarra" styleClass="dato-titulo"/>
+            <Label fx:id="lblProyeccionDetalle" styleClass="dato-titulo" wrapText="true"/>
+        </VBox>
+
+        <HBox spacing="12">
+            <PieChart fx:id="graficaCategorias" labelsVisible="false" prefHeight="280" HBox.hgrow="ALWAYS"/>
+            <BarChart fx:id="graficaMaterias" prefHeight="280" HBox.hgrow="ALWAYS">
+                <xAxis><CategoryAxis/></xAxis>
+                <yAxis><NumberAxis/></yAxis>
+            </BarChart>
+        </HBox>
+
+        <HBox spacing="12">
+            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                <Label styleClass="dato-titulo" text="Próximos pagos"/>
+                <ListView fx:id="listaPagos" prefHeight="150"/>
+            </VBox>
+            <VBox spacing="6" styleClass="dato" HBox.hgrow="ALWAYS">
+                <Label styleClass="dato-titulo" text="La clase que sigue"/>
+                <Label fx:id="lblProximaClase" styleClass="dato-valor" wrapText="true"/>
+            </VBox>
+        </HBox>
+    </VBox>
+</ScrollPane>
