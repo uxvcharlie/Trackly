@@ -5,17 +5,18 @@
 <?import javafx.scene.layout.*?>
 
 <BorderPane prefHeight="600.0" prefWidth="950.0"
-            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.trackly.controller.FinanzasController">
     <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
 
     <top>
         <HBox alignment="CENTER_LEFT" spacing="10.0">
             <BorderPane.margin><Insets bottom="10"/></BorderPane.margin>
             <Label text="Mes:" />
-            <ComboBox fx:id="cmbFiltroMes" prefWidth="150.0" promptText="Todos" />
+            <ComboBox fx:id="cmbFiltroMes" onAction="#filtrar" prefWidth="150.0" promptText="Todos" />
             <Label text="Categoría:" />
-            <ComboBox fx:id="cmbFiltroCategoria" prefWidth="150.0" promptText="Todas" />
-            <Button fx:id="btnQuitarFiltros" text="Quitar filtros" />
+            <ComboBox fx:id="cmbFiltroCategoria" onAction="#filtrar" prefWidth="150.0" promptText="Todas" />
+            <Button fx:id="btnQuitarFiltros" onAction="#quitarFiltros" text="Quitar filtros" />
         </HBox>
     </top>
 
@@ -60,10 +61,11 @@
             <TextField fx:id="txtNota" promptText="Ej: pasaje, almuerzo, copias" />
 
             <HBox spacing="8.0">
-                <Button fx:id="btnNuevo" text="Nuevo" />
-                <Button fx:id="btnGuardar" defaultButton="true" text="Guardar" />
-                <Button fx:id="btnBorrar" text="Borrar" />
+                <Button fx:id="btnNuevo" onAction="#nuevo" text="Nuevo" />
+                <Button fx:id="btnGuardar" defaultButton="true" onAction="#guardar" text="Guardar" />
+                <Button fx:id="btnBorrar" onAction="#borrar" text="Borrar" />
             </HBox>
+            <Label fx:id="lblMensaje" wrapText="true" />
         </VBox>
     </right>
 </BorderPane>
