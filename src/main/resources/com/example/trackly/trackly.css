@@ -1,0 +1,22 @@
+/* Tinta oscura con acento vino/ciruela mate */
+.root {
+    -fx-base: #1d1a24;
+    -fx-background: #15131a;
+    -fx-control-inner-background: #26222f;
+    -fx-text-fill: #e8e4ee;
+    -fx-accent: #7a3b5e;
+    -fx-focus-color: #a35680;
+    -fx-faint-focus-color: transparent;
+    -fx-font-family: "Inter", "Noto Sans", sans-serif;
+}
+.fondo { -fx-background-color: #15131a; }
+.barra { -fx-background-color: #1d1a24; -fx-border-color: #2c2735; -fx-border-width: 0 0 1 0; }
+.tarjeta { -fx-background-color: #1d1a24; -fx-background-radius: 14; -fx-border-color: #2c2735; -fx-border-radius: 14; }
+.marca { -fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #c27ba0; }
+.titulo { -fx-font-size: 16px; -fx-text-fill: #e8e4ee; }
+.mensaje { -fx-text-fill: #d98aa8; }
+.button { -fx-background-color: #7a3b5e; -fx-text-fill: white; -fx-background-radius: 8; -fx-cursor: hand; }
+.button:hover { -fx-background-color: #8d4870; }
+.button:disabled { -fx-opacity: 0.5; }
+.text-field, .password-field { -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #3a3445; }
+.hyperlink { -fx-text-fill: #c27ba0; }

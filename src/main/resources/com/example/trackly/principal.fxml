@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane prefHeight="640" prefWidth="960" styleClass="fondo" xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.trackly.controller.PrincipalController">
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="12" styleClass="barra">
+            <padding><Insets top="10" right="16" bottom="10" left="16"/></padding>
+            <Label styleClass="marca" text="Trackly"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="lblUsuario"/>
+            <Button onAction="#cerrarSesion" text="Cerrar sesión"/>
+        </HBox>
+    </top>
+    <center>
+        <!-- Cada módulo reemplaza el contenido de su pestaña con su propio FXML -->
+        <TabPane fx:id="tabs" tabClosingPolicy="UNAVAILABLE">
+            <Tab text="Inicio"><Label text="Inicio (pendiente)"/></Tab>
+            <Tab text="Finanzas"><Label text="Finanzas (pendiente)"/></Tab>
+            <Tab text="Recordatorios"><Label text="Recordatorios (pendiente)"/></Tab>
+            <Tab text="Horario"><Label text="Horario (pendiente)"/></Tab>
+        </TabPane>
+    </center>
+</BorderPane>
