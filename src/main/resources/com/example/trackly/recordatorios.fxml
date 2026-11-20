@@ -5,13 +5,14 @@
 <?import javafx.scene.layout.*?>
 
 <BorderPane prefHeight="600.0" prefWidth="950.0"
-            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.trackly.controller.RecordatoriosController">
     <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
 
     <top>
         <HBox alignment="CENTER_LEFT" spacing="10.0">
             <BorderPane.margin><Insets bottom="10"/></BorderPane.margin>
-            <CheckBox fx:id="chkMostrarHechos" text="Mostrar los ya hechos" />
+            <CheckBox fx:id="chkMostrarHechos" onAction="#filtrar" text="Mostrar los ya hechos" />
         </HBox>
     </top>
 
@@ -56,13 +57,13 @@
             <CheckBox fx:id="chkMensual" text="Se repite cada mes" />
 
             <HBox spacing="8.0">
-                <Button fx:id="btnNuevo" text="Nuevo" />
-                <Button fx:id="btnGuardar" defaultButton="true" text="Guardar" />
-                <Button fx:id="btnBorrar" text="Borrar" />
+                <Button fx:id="btnNuevo" onAction="#nuevo" text="Nuevo" />
+                <Button fx:id="btnGuardar" defaultButton="true" onAction="#guardar" text="Guardar" />
+                <Button fx:id="btnBorrar" onAction="#borrar" text="Borrar" />
             </HBox>
             <HBox spacing="8.0">
-                <Button fx:id="btnHecho" text="Marcar hecho" />
-                <Button fx:id="btnPagar" text="Pagar" />
+                <Button fx:id="btnHecho" onAction="#marcarHecho" text="Marcar hecho" />
+                <Button fx:id="btnPagar" onAction="#pagar" text="Pagar" />
             </HBox>
         </VBox>
     </right>
