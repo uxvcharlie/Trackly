@@ -1,22 +1,32 @@
-/* Tinta oscura con acento vino/ciruela mate */
+/* Grafito cálido con vino apagado y texto crema. Sin degradados ni brillos. */
 .root {
-    -fx-base: #1d1a24;
-    -fx-background: #15131a;
-    -fx-control-inner-background: #26222f;
-    -fx-text-fill: #e8e4ee;
-    -fx-accent: #7a3b5e;
-    -fx-focus-color: #a35680;
+    -fx-base: #232120;
+    -fx-background: #1a1918;
+    -fx-control-inner-background: #2b2928;
+    -fx-text-base-color: #e8e2d6;
+    -fx-text-fill: #e8e2d6;
+    -fx-accent: #8a3d3d;
+    -fx-focus-color: #a8625a;
     -fx-faint-focus-color: transparent;
-    -fx-font-family: "Inter", "Noto Sans", sans-serif;
+    -fx-font-family: "Noto Sans", "Inter", sans-serif;
+    -fx-font-size: 14px;
 }
-.fondo { -fx-background-color: #15131a; }
-.barra { -fx-background-color: #1d1a24; -fx-border-color: #2c2735; -fx-border-width: 0 0 1 0; }
-.tarjeta { -fx-background-color: #1d1a24; -fx-background-radius: 14; -fx-border-color: #2c2735; -fx-border-radius: 14; }
-.marca { -fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #c27ba0; }
-.titulo { -fx-font-size: 16px; -fx-text-fill: #e8e4ee; }
-.mensaje { -fx-text-fill: #d98aa8; }
-.button { -fx-background-color: #7a3b5e; -fx-text-fill: white; -fx-background-radius: 8; -fx-cursor: hand; }
-.button:hover { -fx-background-color: #8d4870; }
+.fondo { -fx-background-color: #1a1918; }
+.barra { -fx-background-color: #232120; -fx-border-color: #34312f; -fx-border-width: 0 0 1 0; }
+.tarjeta { -fx-background-color: #232120; -fx-background-radius: 10; -fx-border-color: #34312f; -fx-border-radius: 10; }
+.marca { -fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #d9a58f; }
+.titulo { -fx-font-size: 17px; -fx-text-fill: #e8e2d6; }
+.mensaje { -fx-text-fill: #d9897a; }
+.label { -fx-text-fill: #e8e2d6; }
+.button { -fx-background-color: #8a3d3d; -fx-text-fill: #f3ede2; -fx-background-radius: 6; -fx-padding: 9 16 9 16; -fx-cursor: hand; }
+.button:hover { -fx-background-color: #9c4747; }
 .button:disabled { -fx-opacity: 0.5; }
-.text-field, .password-field { -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #3a3445; }
-.hyperlink { -fx-text-fill: #c27ba0; }
+.text-field, .password-field {
+    -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #46423f;
+    -fx-text-fill: #e8e2d6; -fx-prompt-text-fill: #8f897d; -fx-padding: 9 11 9 11;
+}
+.text-field:focused, .password-field:focused { -fx-border-color: #a8625a; }
+.hyperlink { -fx-text-fill: #d9a58f; }
+.hyperlink:hover { -fx-text-fill: #ecc3ae; }
+.tab-pane > .tab-header-area > .headers-region > .tab { -fx-background-color: #232120; }
+.tab-pane > .tab-header-area > .headers-region > .tab:selected { -fx-background-color: #34312f; }
