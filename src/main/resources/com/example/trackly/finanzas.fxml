@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane prefHeight="600.0" prefWidth="950.0"
+            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.trackly.controller.FinanzasController">
+    <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="10.0">
+            <BorderPane.margin><Insets bottom="10"/></BorderPane.margin>
+            <Label text="Mes:" />
+            <ComboBox fx:id="cmbFiltroMes" onAction="#filtrar" prefWidth="150.0" promptText="Todos" />
+            <Label text="Categoría:" />
+            <ComboBox fx:id="cmbFiltroCategoria" onAction="#filtrar" prefWidth="150.0" promptText="Todas" />
+            <Button fx:id="btnQuitarFiltros" onAction="#quitarFiltros" text="Quitar filtros" />
+        </HBox>
+    </top>
+
+    <center>
+        <TableView fx:id="tblMovimientos">
+            <columns>
+                <TableColumn fx:id="colFecha" prefWidth="90.0" text="Fecha" />
+                <TableColumn fx:id="colTipo" prefWidth="70.0" text="Tipo" />
+                <TableColumn fx:id="colCategoria" prefWidth="110.0" text="Categoría" />
+                <TableColumn fx:id="colClase" prefWidth="110.0" text="Clase" />
+                <TableColumn fx:id="colNota" prefWidth="160.0" text="Nota" />
+                <TableColumn fx:id="colMonto" prefWidth="90.0" text="Monto (C$)" />
+            </columns>
+            <columnResizePolicy>
+                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+            </columnResizePolicy>
+        </TableView>
+    </center>
+
+    <right>
+        <VBox prefWidth="260.0" spacing="8.0">
+            <BorderPane.margin><Insets left="10"/></BorderPane.margin>
+            <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Movimiento" />
+
+            <Label text="Tipo" />
+            <ComboBox fx:id="cmbTipo" maxWidth="Infinity" promptText="Gasto o ingreso" />
+
+            <Label text="Monto (C$)" />
+            <TextField fx:id="txtMonto" promptText="0.00" />
+
+            <Label text="Categoría" />
+            <ComboBox fx:id="cmbCategoria" maxWidth="Infinity" />
+
+            <Label text="Fecha" />
+            <DatePicker fx:id="dpFecha" maxWidth="Infinity" />
+
+            <Label text="Clase (opcional)" />
+            <ComboBox fx:id="cmbClase" maxWidth="Infinity" promptText="Sin clase" />
+            <Label fx:id="lblClaseSugerida" style="-fx-text-fill: gray;" wrapText="true" />
+
+            <Label text="Nota" />
+            <TextField fx:id="txtNota" promptText="Ej: pasaje, almuerzo, copias" />
+
+            <HBox spacing="8.0">
+                <Button fx:id="btnNuevo" onAction="#nuevo" text="Nuevo" />
+                <Button fx:id="btnGuardar" defaultButton="true" onAction="#guardar" text="Guardar" />
+                <Button fx:id="btnBorrar" onAction="#borrar" text="Borrar" />
+            </HBox>
+            <Label fx:id="lblMensaje" wrapText="true" />
+        </VBox>
+    </right>
+</BorderPane>
