@@ -18,7 +18,7 @@
     <center>
         <!-- Cada módulo reemplaza el contenido de su pestaña con su propio FXML -->
         <TabPane fx:id="tabs" tabClosingPolicy="UNAVAILABLE">
-            <Tab text="Inicio"><Label text="Inicio (pendiente)"/></Tab>
+            <Tab fx:id="tabInicio" text="Inicio"><fx:include fx:id="inicio" source="inicio.fxml"/></Tab>
             <Tab text="Finanzas"><fx:include source="finanzas.fxml"/></Tab>
             <Tab text="Recordatorios"><fx:include source="recordatorios.fxml"/></Tab>
             <Tab text="Horario"><Label text="Horario (pendiente)"/></Tab>
