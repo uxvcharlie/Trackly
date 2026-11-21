@@ -21,7 +21,7 @@
             <Tab text="Inicio"><Label text="Inicio (pendiente)"/></Tab>
             <Tab text="Finanzas"><fx:include source="finanzas.fxml"/></Tab>
             <Tab text="Recordatorios"><fx:include source="recordatorios.fxml"/></Tab>
-            <Tab text="Horario"><Label text="Horario (pendiente)"/></Tab>
+            <Tab text="Horario"><fx:include source="horario.fxml"/></Tab>
         </TabPane>
     </center>
 </BorderPane>
