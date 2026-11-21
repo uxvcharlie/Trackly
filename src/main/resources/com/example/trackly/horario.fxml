@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane prefHeight="600.0" prefWidth="950.0"
+            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.trackly.controller.HorarioController">
+    <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="10.0">
+            <BorderPane.margin><Insets bottom="10"/></BorderPane.margin>
+            <Label text="Gastos del mes:" />
+            <ComboBox fx:id="cmbMes" onAction="#cambiarMes" prefWidth="170.0" />
+            <Region HBox.hgrow="ALWAYS" />
+            <Label fx:id="lblTotal" styleClass="titulo" />
+        </HBox>
+    </top>
+
+    <center>
+        <TableView fx:id="tblClases">
+            <placeholder>
+                <Label text="Todavía no hay clases. Agregá la primera con el formulario." />
+            </placeholder>
+            <columns>
+                <TableColumn fx:id="colDia" prefWidth="90.0" text="Día" />
+                <TableColumn fx:id="colHora" prefWidth="110.0" text="Hora" />
+                <TableColumn fx:id="colMateria" prefWidth="180.0" text="Materia" />
+                <TableColumn fx:id="colAula" prefWidth="80.0" text="Aula" />
+                <TableColumn fx:id="colGastado" prefWidth="110.0" text="Gastado (C$)" />
+            </columns>
+            <columnResizePolicy>
+                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+            </columnResizePolicy>
+        </TableView>
+    </center>
+
+    <right>
+        <VBox prefWidth="260.0" spacing="8.0">
+            <BorderPane.margin><Insets left="10"/></BorderPane.margin>
+            <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Clase" />
+
+            <Label text="Día" />
+            <ComboBox fx:id="cmbDia" maxWidth="Infinity" promptText="Lunes a domingo" />
+
+            <Label text="Hora de inicio" />
+            <TextField fx:id="txtHoraInicio" promptText="08:00" />
+
+            <Label text="Hora de fin" />
+            <TextField fx:id="txtHoraFin" promptText="10:00" />
+
+            <Label text="Materia" />
+            <TextField fx:id="txtMateria" promptText="Ej: Programación de Escritorio" />
+
+            <Label text="Aula (opcional)" />
+            <TextField fx:id="txtAula" promptText="Ej: B-204" />
+
+            <HBox spacing="8.0">
+                <Button fx:id="btnNuevo" onAction="#nuevo" text="Nuevo" />
+                <Button fx:id="btnGuardar" defaultButton="true" onAction="#guardar" text="Guardar" />
+                <Button fx:id="btnBorrar" onAction="#borrar" text="Borrar" />
+            </HBox>
+            <Label style="-fx-text-fill: gray;" wrapText="true"
+                   text="Lo gastado sale de los gastos de Finanzas ligados a cada clase." />
+        </VBox>
+    </right>
+</BorderPane>
