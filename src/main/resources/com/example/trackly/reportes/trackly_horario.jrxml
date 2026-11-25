@@ -1,0 +1,98 @@
+<!-- Trackly: subreporte del horario con lo que se gastó en cada clase (va dentro de trackly_reporte_mensual) -->
+<jasperReport name="trackly_horario" language="java" pageWidth="555" pageHeight="842" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenNoDataType="AllSectionsNoDetail" uuid="bfa014b0-b035-4e35-bd95-70de0c09e6d6">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Trackly"/>
+	<parameter name="ID_USUARIO" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DESDE" class="java.sql.Date">
+		<defaultValueExpression><![CDATA[java.sql.Date.valueOf(java.time.LocalDate.now().withDayOfMonth(1))]]></defaultValueExpression>
+	</parameter>
+	<parameter name="HASTA" class="java.sql.Date">
+		<defaultValueExpression><![CDATA[java.sql.Date.valueOf(java.time.YearMonth.now().atEndOfMonth())]]></defaultValueExpression>
+	</parameter>
+	<query language="SQL"><![CDATA[SELECT cl.dia,
+	cl.hora_inicio,
+	cl.hora_fin,
+	cl.materia,
+	cl.aula,
+	COALESCE(SUM(m.monto), 0) AS gasto_mes
+FROM clases cl
+	LEFT JOIN movimientos m ON m.id_clase = cl.id
+		AND m.tipo = 'GASTO'
+		AND m.fecha BETWEEN $P{DESDE} AND $P{HASTA}
+WHERE cl.id_usuario = $P{ID_USUARIO}
+GROUP BY cl.id, cl.dia, cl.hora_inicio, cl.hora_fin, cl.materia, cl.aula
+ORDER BY cl.dia, cl.hora_inicio]]></query>
+	<field name="dia" class="java.lang.Integer"/>
+	<field name="hora_inicio" class="java.sql.Time"/>
+	<field name="hora_fin" class="java.sql.Time"/>
+	<field name="materia" class="java.lang.String"/>
+	<field name="aula" class="java.lang.String"/>
+	<field name="gasto_mes" class="java.math.BigDecimal"/>
+	<variable name="totalClases" calculation="Sum" class="java.math.BigDecimal">
+		<expression><![CDATA[$F{gasto_mes}]]></expression>
+		<initialValueExpression><![CDATA[java.math.BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<group name="dia">
+		<expression><![CDATA[$F{dia}]]></expression>
+	</group>
+	<title height="44" splitType="Stretch">
+		<element kind="staticText" uuid="f96c129e-cfeb-46bb-a5dc-8cfd443a71ca" x="0" y="0" width="555" height="18" forecolor="#1F1D1C" fontSize="12.0" bold="true">
+			<text><![CDATA[Horario de clases]]></text>
+		</element>
+		<element kind="staticText" uuid="5471b5fe-eb92-483a-bf70-635258d8f81a" x="0" y="18" width="555" height="12" forecolor="#6B655C" fontSize="8.0">
+			<text><![CDATA[Con lo que se gastó este mes en los movimientos ligados a cada clase.]]></text>
+		</element>
+		<element kind="textField" uuid="8d2c7210-ca58-4d46-a084-b7df332bcaf3" x="0" y="30" width="555" height="14" forecolor="#6B655C" fontSize="8.5">
+			<printWhenExpression><![CDATA[$F{materia} == null]]></printWhenExpression>
+			<expression><![CDATA["No hay clases en el horario."]]></expression>
+		</element>
+	</title>
+	<columnHeader height="20" splitType="Stretch">
+		<printWhenExpression><![CDATA[$F{materia} != null]]></printWhenExpression>
+		<element kind="staticText" uuid="bef11345-4f14-4068-8d79-6d718e59eba5" x="6" y="3" width="80" height="14" forecolor="#6B655C" fontSize="8.0" bold="true">
+			<text><![CDATA[DÍA]]></text>
+		</element>
+		<element kind="staticText" uuid="16a08ed2-ebb4-4a96-ad37-132931bf99b8" x="90" y="3" width="90" height="14" forecolor="#6B655C" fontSize="8.0" bold="true">
+			<text><![CDATA[HORA]]></text>
+		</element>
+		<element kind="staticText" uuid="bde78da2-0a92-4f42-9698-c4057d2c52c1" x="184" y="3" width="200" height="14" forecolor="#6B655C" fontSize="8.0" bold="true">
+			<text><![CDATA[MATERIA]]></text>
+		</element>
+		<element kind="staticText" uuid="2bfd64e7-e582-4e43-b36c-083f459c2aad" x="388" y="3" width="70" height="14" forecolor="#6B655C" fontSize="8.0" bold="true">
+			<text><![CDATA[AULA]]></text>
+		</element>
+		<element kind="staticText" uuid="de9aba85-5194-4b66-942f-23f50b63b8e7" x="462" y="3" width="93" height="14" forecolor="#6B655C" fontSize="8.0" bold="true" hTextAlign="Right">
+			<text><![CDATA[GASTO DEL MES]]></text>
+		</element>
+		<element kind="line" uuid="e036527a-8f51-4eb7-bee8-fbfe4e3885d0" x="0" y="18" width="555" height="1" forecolor="#1F1D1C"/>
+	</columnHeader>
+	<detail>
+		<band height="18" splitType="Stretch">
+			<element kind="textField" uuid="3edbfb76-1f49-4659-a017-725aa900b741" x="6" y="2" width="80" height="14" forecolor="#8A3D3D" fontSize="8.5" bold="true">
+				<printWhenExpression><![CDATA[$V{dia_COUNT} == 1]]></printWhenExpression>
+				<expression><![CDATA[new String[]{"Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"}[$F{dia} - 1]]]></expression>
+			</element>
+			<element kind="textField" uuid="7a694767-60a9-4340-8152-8d4fa69a4a5b" x="90" y="2" width="90" height="14" forecolor="#1F1D1C" fontSize="8.5">
+				<expression><![CDATA[new java.text.SimpleDateFormat("HH:mm").format($F{hora_inicio}) + " - " + new java.text.SimpleDateFormat("HH:mm").format($F{hora_fin})]]></expression>
+			</element>
+			<element kind="textField" uuid="4e836ce7-0bf3-4795-92a2-409995a7e221" x="184" y="2" width="200" height="14" forecolor="#1F1D1C" fontSize="8.5" textAdjust="ScaleFont">
+				<expression><![CDATA[$F{materia}]]></expression>
+			</element>
+			<element kind="textField" uuid="0332eefa-b068-4f69-a358-6e5e53879376" x="388" y="2" width="70" height="14" forecolor="#6B655C" fontSize="8.5">
+				<expression><![CDATA[$F{aula} == null ? "—" : $F{aula}]]></expression>
+			</element>
+			<element kind="textField" uuid="7bb312d7-36bf-411a-9567-666d3c2fb83c" x="462" y="2" width="93" height="14" forecolor="#1F1D1C" fontSize="8.5" hTextAlign="Right">
+				<expression><![CDATA[$F{gasto_mes}.signum() == 0 ? "—" : "C$ " + new java.text.DecimalFormat("#,##0.00").format($F{gasto_mes})]]></expression>
+			</element>
+			<element kind="line" uuid="3d353d17-1aae-48b9-aee4-56b9d1ab586a" x="0" y="17" width="555" height="1" forecolor="#ECE7DE"/>
+		</band>
+	</detail>
+	<summary height="24" splitType="Stretch">
+		<printWhenExpression><![CDATA[$F{materia} != null]]></printWhenExpression>
+		<element kind="textField" uuid="7c851635-c97e-4fe0-96fd-96f19fca17d1" x="0" y="6" width="555" height="14" forecolor="#1F1D1C" fontSize="9.0" hTextAlign="Right">
+			<expression><![CDATA[$V{REPORT_COUNT} + ($V{REPORT_COUNT} == 1 ? " clase a la semana" : " clases a la semana")
+	+ "   ·   Gastado en días de clase: C$ " + new java.text.DecimalFormat("#,##0.00").format($V{totalClases})]]></expression>
+		</element>
+	</summary>
+</jasperReport>

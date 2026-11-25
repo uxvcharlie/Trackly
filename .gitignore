@@ -24,6 +24,9 @@ target/
 credentials*
 application-local.*
 
+# Reportes compilados por Jaspersoft Studio (la app compila los .jrxml sola)
+*.jasper
+
 # Herramientas
 .claude/
 .DS_Store

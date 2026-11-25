@@ -1,0 +1,388 @@
+<!-- Trackly: reporte mensual (JasperReports 7.0.8, se abre con Jaspersoft Studio 7.0.8) -->
+<jasperReport name="trackly_reporte_mensual" language="java" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="24" bottomMargin="24" whenNoDataType="AllSectionsNoDetail" summaryWithPageHeaderAndFooter="true" uuid="2cc57617-b9cf-449b-8346-0d801d15f104">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Trackly"/>
+	<dataset name="gastosPorCategoria" uuid="ac6b4b6e-2b8f-4690-8706-8a0fbbc76ee2">
+		<parameter name="ID_USUARIO" class="java.lang.Integer"/>
+		<parameter name="DESDE" class="java.sql.Date"/>
+		<parameter name="HASTA" class="java.sql.Date"/>
+		<query language="SQL"><![CDATA[SELECT c.nombre AS categoria, SUM(m.monto) AS total
+FROM movimientos m
+	JOIN categorias c ON c.id = m.id_categoria
+WHERE m.id_usuario = $P{ID_USUARIO} AND m.tipo = 'GASTO'
+	AND m.fecha BETWEEN $P{DESDE} AND $P{HASTA}
+GROUP BY c.nombre
+ORDER BY total DESC]]></query>
+		<field name="categoria" class="java.lang.String"/>
+		<field name="total" class="java.math.BigDecimal"/>
+	</dataset>
+	<dataset name="gastosPorMateria" uuid="800a703b-345c-4919-967f-1f0d6c010213">
+		<parameter name="ID_USUARIO" class="java.lang.Integer"/>
+		<parameter name="DESDE" class="java.sql.Date"/>
+		<parameter name="HASTA" class="java.sql.Date"/>
+		<query language="SQL"><![CDATA[SELECT cl.materia, SUM(m.monto) AS total
+FROM movimientos m
+	JOIN clases cl ON cl.id = m.id_clase
+WHERE m.id_usuario = $P{ID_USUARIO} AND m.tipo = 'GASTO'
+	AND m.fecha BETWEEN $P{DESDE} AND $P{HASTA}
+GROUP BY cl.materia
+ORDER BY total DESC]]></query>
+		<field name="materia" class="java.lang.String"/>
+		<field name="total" class="java.math.BigDecimal"/>
+	</dataset>
+	<parameter name="ID_USUARIO" class="java.lang.Integer">
+		<description><![CDATA[Usuario de la sesión; todas las consultas filtran por él]]></description>
+		<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DESDE" class="java.sql.Date">
+		<defaultValueExpression><![CDATA[java.sql.Date.valueOf(java.time.LocalDate.now().withDayOfMonth(1))]]></defaultValueExpression>
+	</parameter>
+	<parameter name="HASTA" class="java.sql.Date">
+		<defaultValueExpression><![CDATA[java.sql.Date.valueOf(java.time.YearMonth.now().atEndOfMonth())]]></defaultValueExpression>
+	</parameter>
+	<parameter name="USUARIO" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Usuario de prueba"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PRESUPUESTO" class="java.math.BigDecimal">
+		<description><![CDATA[Las cuentas del resumen llegan desde ResumenMes, las mismas del Inicio]]></description>
+	</parameter>
+	<parameter name="PENDIENTES" class="java.math.BigDecimal"/>
+	<parameter name="DISPONIBLE" class="java.math.BigDecimal"/>
+	<parameter name="PROYECCION" class="java.math.BigDecimal"/>
+	<parameter name="AL_FINAL" class="java.math.BigDecimal"/>
+	<parameter name="COSTO_POR_DIA" class="java.math.BigDecimal"/>
+	<parameter name="DIAS_QUE_FALTAN" class="java.lang.Long"/>
+	<parameter name="SUB_RECORDATORIOS" class="java.lang.Object">
+		<description><![CDATA[Desde la app llega ya compilado; en Studio usa el .jasper de la misma carpeta]]></description>
+		<defaultValueExpression><![CDATA["trackly_recordatorios.jasper"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUB_HORARIO" class="java.lang.Object">
+		<defaultValueExpression><![CDATA["trackly_horario.jasper"]]></defaultValueExpression>
+	</parameter>
+	<query language="SQL"><![CDATA[SELECT c.nombre AS categoria,
+	m.fecha,
+	m.tipo,
+	m.monto,
+	m.nota,
+	cl.materia
+FROM movimientos m
+	JOIN categorias c ON c.id = m.id_categoria
+	LEFT JOIN clases cl ON cl.id = m.id_clase
+WHERE m.id_usuario = $P{ID_USUARIO}
+	AND m.fecha BETWEEN $P{DESDE} AND $P{HASTA}
+ORDER BY c.nombre, m.fecha, m.id]]></query>
+	<field name="categoria" class="java.lang.String"/>
+	<field name="fecha" class="java.sql.Date"/>
+	<field name="tipo" class="java.lang.String"/>
+	<field name="monto" class="java.math.BigDecimal"/>
+	<field name="nota" class="java.lang.String"/>
+	<field name="materia" class="java.lang.String"/>
+	<variable name="gastoMovimiento" class="java.math.BigDecimal">
+		<expression><![CDATA["GASTO".equals($F{tipo}) ? $F{monto} : java.math.BigDecimal.ZERO]]></expression>
+	</variable>
+	<variable name="ingresoMovimiento" class="java.math.BigDecimal">
+		<expression><![CDATA["INGRESO".equals($F{tipo}) ? $F{monto} : java.math.BigDecimal.ZERO]]></expression>
+	</variable>
+	<variable name="gastoCategoria" resetType="Group" calculation="Sum" resetGroup="categoria" class="java.math.BigDecimal">
+		<expression><![CDATA[$V{gastoMovimiento}]]></expression>
+	</variable>
+	<variable name="ingresoCategoria" resetType="Group" calculation="Sum" resetGroup="categoria" class="java.math.BigDecimal">
+		<expression><![CDATA[$V{ingresoMovimiento}]]></expression>
+	</variable>
+	<variable name="totalGastos" calculation="Sum" class="java.math.BigDecimal">
+		<expression><![CDATA[$V{gastoMovimiento}]]></expression>
+		<initialValueExpression><![CDATA[java.math.BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="gastoEnClases" calculation="Sum" class="java.math.BigDecimal">
+		<expression><![CDATA[$F{materia} != null ? $V{gastoMovimiento} : java.math.BigDecimal.ZERO]]></expression>
+		<initialValueExpression><![CDATA[java.math.BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<variable name="totalIngresos" calculation="Sum" class="java.math.BigDecimal">
+		<expression><![CDATA[$V{ingresoMovimiento}]]></expression>
+		<initialValueExpression><![CDATA[java.math.BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<group name="categoria">
+		<expression><![CDATA[$F{categoria}]]></expression>
+		<groupHeader>
+			<band height="26">
+				<printWhenExpression><![CDATA[$F{categoria} != null]]></printWhenExpression>
+				<element kind="frame" uuid="cc9504e6-fe1e-4665-8212-8c5586daa71f" x="0" y="6" width="555" height="18" mode="Opaque" backcolor="#F3EEE6">
+					<element kind="textField" uuid="d71c8ff0-a6d1-40d6-b1e4-7bb321c11aa5" x="6" y="0" width="300" height="18" forecolor="#8A3D3D" fontSize="10.0" bold="true" vTextAlign="Middle">
+						<expression><![CDATA[$F{categoria}]]></expression>
+					</element>
+				</element>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="22">
+				<printWhenExpression><![CDATA[$F{categoria} != null]]></printWhenExpression>
+				<element kind="line" uuid="67213cfb-d099-458a-8d64-7ce1839491af" x="305" y="2" width="250" height="1" forecolor="#D9D3C7"/>
+				<element kind="textField" uuid="4e856b7a-27eb-4a5b-a132-8c9e75437b0f" x="250" y="5" width="305" height="14" forecolor="#6B655C" fontSize="8.5" hTextAlign="Right">
+					<expression><![CDATA["Subtotal " + $F{categoria} + ":  gastos C$ " + new java.text.DecimalFormat("#,##0.00").format($V{gastoCategoria})
+	+ ($V{ingresoCategoria}.signum() > 0 ? "  ·  ingresos C$ " + new java.text.DecimalFormat("#,##0.00").format($V{ingresoCategoria}) : "")]]></expression>
+				</element>
+			</band>
+		</groupFooter>
+	</group>
+	<background splitType="Stretch"/>
+	<title height="230" splitType="Stretch">
+		<element kind="staticText" uuid="327c389b-a9e5-4e4a-9382-bf100ebd1ef6" x="0" y="0" width="250" height="32" forecolor="#8A3D3D" fontSize="22.0" bold="true">
+			<text><![CDATA[Trackly]]></text>
+		</element>
+		<element kind="staticText" uuid="917f0ddb-8695-4613-a649-8a8ee1b0e03c" x="255" y="0" width="300" height="14" forecolor="#6B655C" fontSize="8.0" hTextAlign="Right">
+			<text><![CDATA[REPORTE MENSUAL]]></text>
+		</element>
+		<element kind="textField" uuid="db545f97-40e8-4caf-a823-11b6055436fd" x="255" y="13" width="300" height="22" forecolor="#1F1D1C" fontSize="15.0" bold="true" hTextAlign="Right">
+			<expression><![CDATA[new java.text.SimpleDateFormat("MMMM 'de' yyyy", java.util.Locale.forLanguageTag("es-NI")).format($P{DESDE}).substring(0, 1).toUpperCase()
+	+ new java.text.SimpleDateFormat("MMMM 'de' yyyy", java.util.Locale.forLanguageTag("es-NI")).format($P{DESDE}).substring(1)]]></expression>
+		</element>
+		<element kind="textField" uuid="6c4ed254-8780-48ba-83d7-1df1be36d27c" x="0" y="36" width="555" height="14" forecolor="#6B655C" fontSize="9.0">
+			<expression><![CDATA["Usuario: " + $P{USUARIO} + "   ·   Del " + new java.text.SimpleDateFormat("dd/MM/yyyy").format($P{DESDE})
+	+ " al " + new java.text.SimpleDateFormat("dd/MM/yyyy").format($P{HASTA})
+	+ "   ·   Emitido el " + new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(new java.util.Date())]]></expression>
+		</element>
+		<element kind="line" uuid="06bb780f-97e0-48a4-96b0-3560956b75ac" x="0" y="52" width="555" height="1" forecolor="#8A3D3D">
+			<pen lineWidth="1.5"/>
+		</element>
+		<element kind="frame" uuid="0017b929-ff03-46bd-9dee-9a2fccc36720" x="0" y="62" width="132" height="46" mode="Opaque" backcolor="#F3EEE6">
+			<element kind="staticText" uuid="7d5d3540-9631-462d-accc-d7516c9f8e79" x="8" y="6" width="118" height="12" forecolor="#6B655C" fontSize="8.0">
+				<text><![CDATA[Presupuesto del mes]]></text>
+			</element>
+			<element kind="textField" uuid="288645c1-7b55-4385-8b9d-464d4c8049ba" x="8" y="20" width="118" height="20" forecolor="#1F1D1C" fontSize="13.0" bold="true">
+				<expression><![CDATA[$P{PRESUPUESTO} == null ? "—" : "C$ " + new java.text.DecimalFormat("#,##0.00").format($P{PRESUPUESTO})]]></expression>
+			</element>
+		</element>
+		<element kind="frame" uuid="969e3aae-39c4-48e1-b99a-d6801d7faa6a" x="141" y="62" width="132" height="46" mode="Opaque" backcolor="#F3EEE6">
+			<element kind="staticText" uuid="694e3b65-4db8-437b-a3fb-e2ac31d95a6b" x="8" y="6" width="118" height="12" forecolor="#6B655C" fontSize="8.0">
+				<text><![CDATA[Gastado]]></text>
+			</element>
+			<element kind="textField" uuid="214197fa-313a-4a7c-b368-168d4a51772b" x="8" y="20" width="118" height="20" forecolor="#1F1D1C" fontSize="13.0" bold="true" evaluationTime="Report">
+				<expression><![CDATA["C$ " + new java.text.DecimalFormat("#,##0.00").format($V{totalGastos})]]></expression>
+			</element>
+		</element>
+		<element kind="frame" uuid="ef25ff85-63d1-4fc0-93b0-d71a1abb4299" x="282" y="62" width="132" height="46" mode="Opaque" backcolor="#F3EEE6">
+			<element kind="staticText" uuid="2c636d73-07b3-4b40-8c6b-a079c8d64c1a" x="8" y="6" width="118" height="12" forecolor="#6B655C" fontSize="8.0">
+				<text><![CDATA[Ingresos]]></text>
+			</element>
+			<element kind="textField" uuid="85b47038-0997-46d8-b4b0-62ba800c526c" x="8" y="20" width="118" height="20" forecolor="#1F1D1C" fontSize="13.0" bold="true" evaluationTime="Report">
+				<expression><![CDATA["C$ " + new java.text.DecimalFormat("#,##0.00").format($V{totalIngresos})]]></expression>
+			</element>
+		</element>
+		<element kind="frame" uuid="c51d00a4-2652-42cf-b66c-30ab5e96c6f6" x="423" y="62" width="132" height="46" mode="Opaque" backcolor="#F3EEE6">
+			<element kind="staticText" uuid="f3e65e7b-9187-417e-977b-031e30d71883" x="8" y="6" width="118" height="12" forecolor="#6B655C" fontSize="8.0">
+				<text><![CDATA[Pagos pendientes]]></text>
+			</element>
+			<element kind="textField" uuid="e8bd11b0-1c1c-4e02-a014-3a79a68d307d" x="8" y="20" width="118" height="20" forecolor="#1F1D1C" fontSize="13.0" bold="true">
+				<expression><![CDATA[$P{PENDIENTES} == null ? "—" : "C$ " + new java.text.DecimalFormat("#,##0.00").format($P{PENDIENTES})]]></expression>
+			</element>
+		</element>
+		<element kind="frame" uuid="3ea6cb22-4810-46d0-a8a6-b60338923ae1" x="0" y="116" width="273" height="62" mode="Opaque" backcolor="#8A3D3D">
+			<element kind="staticText" uuid="6b848b52-4426-4369-871a-eb909e3789af" x="10" y="7" width="255" height="12" forecolor="#F3E3DC" fontSize="8.0">
+				<text><![CDATA[Disponible  (presupuesto - gastado - pendientes)]]></text>
+			</element>
+			<element kind="textField" uuid="a9e410b6-5705-46cb-b9f5-c2652c9877fb" x="10" y="22" width="255" height="24" forecolor="#FFFFFF" fontSize="17.0" bold="true">
+				<expression><![CDATA[$P{DISPONIBLE} == null ? "—" : "C$ " + new java.text.DecimalFormat("#,##0.00").format($P{DISPONIBLE})]]></expression>
+			</element>
+			<element kind="textField" uuid="eb2b7f5b-3057-429a-9806-eff97c3a2988" x="10" y="46" width="255" height="12" forecolor="#F3E3DC" fontSize="7.5">
+				<expression><![CDATA[$P{DISPONIBLE} != null && $P{DISPONIBLE}.signum() < 0 ? "Ya se pasó del presupuesto." : "Lo que queda para el resto del mes."]]></expression>
+			</element>
+		</element>
+		<element kind="frame" uuid="179f57dd-abc1-4f17-ba48-6c1ef7bc4b9d" x="282" y="116" width="273" height="62" mode="Opaque" backcolor="#F3EEE6">
+			<element kind="staticText" uuid="88ac9732-c1b2-4ccc-a7b9-da7130143eb7" x="10" y="7" width="255" height="12" forecolor="#6B655C" fontSize="8.0">
+				<text><![CDATA[Al final del mes (proyección)]]></text>
+			</element>
+			<element kind="textField" uuid="a13fb474-2e7a-479e-bc32-9e8ebaaa4e78" x="10" y="22" width="255" height="24" forecolor="#1F1D1C" fontSize="17.0" bold="true">
+				<expression><![CDATA[$P{AL_FINAL} == null ? "—" : "C$ " + new java.text.DecimalFormat("#,##0.00").format($P{AL_FINAL})]]></expression>
+			</element>
+			<element kind="textField" uuid="5863d59a-7f66-4155-bdd2-6dcd17a9ccad" x="10" y="46" width="255" height="12" forecolor="#6B655C" fontSize="7.5" textAdjust="ScaleFont">
+				<expression><![CDATA[$P{COSTO_POR_DIA} == null ? "Todavía no hay gastos ligados a una clase."
+	: "Cada día de clase cuesta C$ " + new java.text.DecimalFormat("#,##0.00").format($P{COSTO_POR_DIA})
+		+ "; faltan " + $P{DIAS_QUE_FALTAN} + ". Se gastaría C$ " + new java.text.DecimalFormat("#,##0.00").format($P{PROYECCION}) + "."]]></expression>
+			</element>
+		</element>
+		<element kind="staticText" uuid="9ef5ed66-710a-411e-8d3c-47762ea43744" x="0" y="194" width="555" height="18" forecolor="#1F1D1C" fontSize="12.0" bold="true">
+			<text><![CDATA[Movimientos del mes por categoría]]></text>
+		</element>
+		<element kind="textField" uuid="7e5a5bb7-7d60-4ba1-8c62-b93e6ef36e4c" x="0" y="212" width="555" height="14" forecolor="#6B655C" fontSize="8.5">
+			<printWhenExpression><![CDATA[$F{categoria} == null]]></printWhenExpression>
+			<expression><![CDATA["No hay movimientos registrados en este mes."]]></expression>
+		</element>
+	</title>
+	<columnHeader height="20" splitType="Stretch">
+		<printWhenExpression><![CDATA[$F{categoria} != null]]></printWhenExpression>
+		<element kind="staticText" uuid="74f2e6fc-588d-4a41-8e39-6c370cc6ff8c" x="6" y="3" width="60" height="14" forecolor="#6B655C" fontSize="8.0" bold="true">
+			<text><![CDATA[FECHA]]></text>
+		</element>
+		<element kind="staticText" uuid="3009868b-b57a-4931-bc59-296ef21a5932" x="70" y="3" width="55" height="14" forecolor="#6B655C" fontSize="8.0" bold="true">
+			<text><![CDATA[TIPO]]></text>
+		</element>
+		<element kind="staticText" uuid="b92c2c28-ed24-4992-bc22-b5af2e99bbed" x="129" y="3" width="190" height="14" forecolor="#6B655C" fontSize="8.0" bold="true">
+			<text><![CDATA[NOTA]]></text>
+		</element>
+		<element kind="staticText" uuid="931839bf-b353-4692-8da1-fff3c223ca30" x="323" y="3" width="140" height="14" forecolor="#6B655C" fontSize="8.0" bold="true">
+			<text><![CDATA[CLASE]]></text>
+		</element>
+		<element kind="staticText" uuid="1c0766d2-7d85-40cf-9e5c-611ba7fcc276" x="467" y="3" width="88" height="14" forecolor="#6B655C" fontSize="8.0" bold="true" hTextAlign="Right">
+			<text><![CDATA[MONTO]]></text>
+		</element>
+		<element kind="line" uuid="e5251fac-0e36-4aab-844f-bc27282106c7" x="0" y="18" width="555" height="1" forecolor="#1F1D1C"/>
+	</columnHeader>
+	<detail>
+		<band height="18" splitType="Stretch">
+			<element kind="textField" uuid="e5829ff1-2d03-4406-8561-6ea621a9fa68" x="6" y="2" width="60" height="14" forecolor="#1F1D1C" fontSize="8.5" pattern="dd/MM/yyyy">
+				<expression><![CDATA[$F{fecha}]]></expression>
+			</element>
+			<element kind="textField" uuid="83d10b27-a2bd-4c38-988d-6e1e92657165" x="70" y="2" width="55" height="14" forecolor="#6B655C" fontSize="8.5">
+				<expression><![CDATA["GASTO".equals($F{tipo}) ? "Gasto" : "Ingreso"]]></expression>
+			</element>
+			<element kind="textField" uuid="eff00b9a-144c-4ca4-b8c5-41c3d7b9b962" x="129" y="2" width="190" height="14" forecolor="#1F1D1C" fontSize="8.5" textAdjust="ScaleFont">
+				<expression><![CDATA[$F{nota} == null ? "—" : $F{nota}]]></expression>
+			</element>
+			<element kind="textField" uuid="115540c9-ba89-46d1-ba0c-a8cd3442e500" x="323" y="2" width="140" height="14" forecolor="#6B655C" fontSize="8.5" textAdjust="ScaleFont">
+				<expression><![CDATA[$F{materia} == null ? "" : $F{materia}]]></expression>
+			</element>
+			<element kind="textField" uuid="9b36bf1f-7af4-449b-b889-956db0dba292" x="467" y="2" width="88" height="14" forecolor="#1F1D1C" fontSize="8.5" hTextAlign="Right">
+				<printWhenExpression><![CDATA["GASTO".equals($F{tipo})]]></printWhenExpression>
+				<expression><![CDATA["- C$ " + new java.text.DecimalFormat("#,##0.00").format($F{monto})]]></expression>
+			</element>
+			<element kind="textField" uuid="0ddb1c42-0e6f-4be9-8a64-890b701e4bff" x="467" y="2" width="88" height="14" forecolor="#4F6B3A" fontSize="8.5" bold="true" hTextAlign="Right">
+				<printWhenExpression><![CDATA["INGRESO".equals($F{tipo})]]></printWhenExpression>
+				<expression><![CDATA["+ C$ " + new java.text.DecimalFormat("#,##0.00").format($F{monto})]]></expression>
+			</element>
+			<element kind="line" uuid="98c134af-052a-475d-80fc-294b486834fe" x="0" y="17" width="555" height="1" forecolor="#ECE7DE"/>
+		</band>
+	</detail>
+	<pageFooter height="22" splitType="Stretch">
+		<element kind="line" uuid="b59616d2-2395-4bd1-abbb-cd6e8f6dcdcc" x="0" y="4" width="555" height="1" forecolor="#D9D3C7"/>
+		<element kind="staticText" uuid="c5f4aa47-8fe2-43c6-af10-7571583ef352" x="0" y="8" width="300" height="12" forecolor="#6B655C" fontSize="7.5">
+			<text><![CDATA[Trackly · tablero personal · Programación de Escritorio, UAM]]></text>
+		</element>
+		<element kind="textField" uuid="fcc89998-2ec4-4b65-bca8-9a49a844d335" x="405" y="8" width="110" height="12" forecolor="#6B655C" fontSize="7.5" hTextAlign="Right">
+			<expression><![CDATA["Página " + $V{PAGE_NUMBER} + " de"]]></expression>
+		</element>
+		<element kind="textField" uuid="c7a3f45e-0ca9-4e74-81da-a96b3521800c" x="515" y="8" width="40" height="12" forecolor="#6B655C" fontSize="7.5" evaluationTime="Report">
+			<expression><![CDATA[" " + $V{PAGE_NUMBER}]]></expression>
+		</element>
+	</pageFooter>
+	<summary height="420" splitType="Stretch">
+		<element kind="frame" removeLineWhenBlank="true" uuid="45726615-16e1-42e5-905d-8f52b632a51e" x="305" y="8" width="250" height="52">
+			<printWhenExpression><![CDATA[$F{categoria} != null]]></printWhenExpression>
+			<element kind="line" uuid="43320652-f370-43b5-b4fa-de92e6b41d5c" x="0" y="0" width="250" height="1" forecolor="#1F1D1C"/>
+			<element kind="staticText" uuid="9b27edd4-c4b4-44cf-878e-efefa85b35fb" x="0" y="5" width="140" height="14" forecolor="#1F1D1C" fontSize="9.0">
+				<text><![CDATA[Total de gastos]]></text>
+			</element>
+			<element kind="textField" uuid="a1a849f0-c0a5-4040-9b80-a7c770aad571" x="140" y="5" width="110" height="14" forecolor="#1F1D1C" fontSize="9.0" hTextAlign="Right">
+				<expression><![CDATA["- C$ " + new java.text.DecimalFormat("#,##0.00").format($V{totalGastos})]]></expression>
+			</element>
+			<element kind="staticText" uuid="f5962a00-a31b-4f30-9562-6389cc371cfc" x="0" y="19" width="140" height="14" forecolor="#1F1D1C" fontSize="9.0">
+				<text><![CDATA[Total de ingresos]]></text>
+			</element>
+			<element kind="textField" uuid="5b4d4742-287d-4a00-aa24-3ac63eb80474" x="140" y="19" width="110" height="14" forecolor="#4F6B3A" fontSize="9.0" hTextAlign="Right">
+				<expression><![CDATA["+ C$ " + new java.text.DecimalFormat("#,##0.00").format($V{totalIngresos})]]></expression>
+			</element>
+			<element kind="staticText" uuid="a51a6805-9025-4cac-b969-5ed1e885d1be" x="0" y="34" width="140" height="16" forecolor="#8A3D3D" fontSize="10.0" bold="true">
+				<text><![CDATA[Balance del mes]]></text>
+			</element>
+			<element kind="textField" uuid="e584fd2b-c814-4919-a8be-c62e7cfdae99" x="140" y="34" width="110" height="16" forecolor="#8A3D3D" fontSize="10.0" bold="true" hTextAlign="Right">
+				<expression><![CDATA["C$ " + new java.text.DecimalFormat("#,##0.00;- #,##0.00").format($V{totalIngresos}.subtract($V{totalGastos}))]]></expression>
+			</element>
+		</element>
+		<element kind="staticText" uuid="01c0c579-686d-4815-9088-c9f37bbecaab" removeLineWhenBlank="true" x="0" y="74" width="270" height="16" forecolor="#1F1D1C" fontSize="11.0" bold="true">
+			<printWhenExpression><![CDATA[$V{totalGastos}.signum() > 0]]></printWhenExpression>
+			<text><![CDATA[Gastos por categoría]]></text>
+		</element>
+		<element kind="staticText" uuid="67d47fcd-a435-4f7b-9474-721977268273" removeLineWhenBlank="true" x="285" y="74" width="270" height="16" forecolor="#1F1D1C" fontSize="11.0" bold="true">
+			<printWhenExpression><![CDATA[$V{totalGastos}.signum() > 0]]></printWhenExpression>
+			<text><![CDATA[Gastos ligados a cada materia]]></text>
+		</element>
+		<element kind="chart" uuid="d928b63f-d582-49e0-99b1-d24c1c6c28f5" removeLineWhenBlank="true" x="0" y="94" width="270" height="190" showLegend="true" chartType="pie" legendPosition="Right">
+			<printWhenExpression><![CDATA[$V{totalGastos}.signum() > 0]]></printWhenExpression>
+			<legendFont fontSize="8.0"/>
+			<dataset kind="pie">
+				<datasetRun uuid="9ab30688-a282-46a3-99de-bd402369d5cb" subDataset="gastosPorCategoria">
+					<parameter name="ID_USUARIO">
+						<expression><![CDATA[$P{ID_USUARIO}]]></expression>
+					</parameter>
+					<parameter name="DESDE">
+						<expression><![CDATA[$P{DESDE}]]></expression>
+					</parameter>
+					<parameter name="HASTA">
+						<expression><![CDATA[$P{HASTA}]]></expression>
+					</parameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				</datasetRun>
+				<series>
+					<keyExpression><![CDATA[$F{categoria}]]></keyExpression>
+					<valueExpression><![CDATA[$F{total}]]></valueExpression>
+				</series>
+			</dataset>
+			<plot circular="true" showLabels="false" legendLabelFormat="{0}  {2}">
+				<seriesColor order="0" color="#8A3D3D"/>
+				<seriesColor order="1" color="#B0805A"/>
+				<seriesColor order="2" color="#6F7A5A"/>
+				<seriesColor order="3" color="#5A7080"/>
+				<seriesColor order="4" color="#A89A6A"/>
+				<seriesColor order="5" color="#7A5A4A"/>
+				<seriesColor order="6" color="#8F897D"/>
+				<itemLabel/>
+			</plot>
+		</element>
+		<element kind="chart" uuid="b1d9faba-4969-4560-837d-c99be8d525a8" removeLineWhenBlank="true" x="285" y="94" width="270" height="190" showLegend="false" chartType="bar">
+			<printWhenExpression><![CDATA[$V{gastoEnClases}.signum() > 0]]></printWhenExpression>
+			<dataset kind="category">
+				<datasetRun uuid="e95772f5-a9b1-420e-a898-6f4219898487" subDataset="gastosPorMateria">
+					<parameter name="ID_USUARIO">
+						<expression><![CDATA[$P{ID_USUARIO}]]></expression>
+					</parameter>
+					<parameter name="DESDE">
+						<expression><![CDATA[$P{DESDE}]]></expression>
+					</parameter>
+					<parameter name="HASTA">
+						<expression><![CDATA[$P{HASTA}]]></expression>
+					</parameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				</datasetRun>
+				<series>
+					<seriesExpression><![CDATA["Gasto"]]></seriesExpression>
+					<categoryExpression><![CDATA[$F{materia}]]></categoryExpression>
+					<valueExpression><![CDATA[$F{total}]]></valueExpression>
+				</series>
+			</dataset>
+			<plot orientation="Horizontal" valueAxisTickLabelMask="C$ #,##0" categoryAxisTickLabelColor="#1F1D1C" valueAxisTickLabelColor="#6B655C">
+				<categoryAxisTickLabelFont fontSize="7.0"/>
+				<valueAxisTickLabelFont fontSize="7.0"/>
+				<seriesColor order="0" color="#B0805A"/>
+				<itemLabel/>
+			</plot>
+		</element>
+		<element kind="textField" uuid="931e740d-0b96-4005-b028-5385a019c315" removeLineWhenBlank="true" x="285" y="100" width="270" height="14" forecolor="#6B655C" fontSize="8.5">
+			<printWhenExpression><![CDATA[$V{totalGastos}.signum() > 0 && $V{gastoEnClases}.signum() == 0]]></printWhenExpression>
+			<expression><![CDATA["Este mes no hay gastos ligados a una clase."]]></expression>
+		</element>
+		<element kind="subreport" uuid="b66caa3e-5dc0-42b6-89ba-a0a4328f4018" positionType="Float" x="0" y="310" width="555" height="40">
+			<parameter name="ID_USUARIO">
+				<expression><![CDATA[$P{ID_USUARIO}]]></expression>
+			</parameter>
+			<parameter name="DESDE">
+				<expression><![CDATA[$P{DESDE}]]></expression>
+			</parameter>
+			<parameter name="HASTA">
+				<expression><![CDATA[$P{HASTA}]]></expression>
+			</parameter>
+			<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+			<expression><![CDATA[$P{SUB_RECORDATORIOS}]]></expression>
+		</element>
+		<element kind="subreport" uuid="8b56cb38-69ad-468a-916f-bc17e47220a1" positionType="Float" x="0" y="364" width="555" height="40">
+			<parameter name="ID_USUARIO">
+				<expression><![CDATA[$P{ID_USUARIO}]]></expression>
+			</parameter>
+			<parameter name="DESDE">
+				<expression><![CDATA[$P{DESDE}]]></expression>
+			</parameter>
+			<parameter name="HASTA">
+				<expression><![CDATA[$P{HASTA}]]></expression>
+			</parameter>
+			<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+			<expression><![CDATA[$P{SUB_HORARIO}]]></expression>
+		</element>
+	</summary>
+</jasperReport>
