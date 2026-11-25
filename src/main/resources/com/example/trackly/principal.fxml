@@ -12,6 +12,7 @@
             <Label styleClass="marca" text="Trackly"/>
             <Region HBox.hgrow="ALWAYS"/>
             <Label fx:id="lblUsuario"/>
+            <Button fx:id="btnReporte" onAction="#generarReporte" text="Reporte PDF"/>
             <Button onAction="#cerrarSesion" text="Cerrar sesión"/>
         </HBox>
     </top>

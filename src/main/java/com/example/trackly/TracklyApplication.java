@@ -2,16 +2,21 @@ package com.example.trackly;
 
 import com.example.trackly.database.JPAUtil;
 import javafx.application.Application;
+import javafx.application.HostServices;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.IOException;
 
 public class TracklyApplication extends Application {
 
+    private static HostServices servicios;
+
     @Override
     public void start(Stage stage) throws IOException {
+        servicios = getHostServices();
         stage.setMinWidth(480);
         stage.setMinHeight(560);
         mostrar(stage, "login.fxml", "Trackly");
@@ -25,6 +30,11 @@ public class TracklyApplication extends Application {
         scene.getStylesheets().add(TracklyApplication.class.getResource("trackly.css").toExternalForm());
         stage.setTitle(titulo);
         stage.setScene(scene);
+    }
+
+    /** Abre un archivo (el PDF del reporte) con el programa predeterminado del sistema. */
+    public static void abrir(File archivo) {
+        servicios.showDocument(archivo.toURI().toString());
     }
 
     @Override
